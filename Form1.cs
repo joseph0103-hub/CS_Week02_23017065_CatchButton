@@ -137,6 +137,10 @@ namespace CatchButton
             if (newWidth < 50) newWidth = 50;
             if (newHeight < 30) newHeight = 30;
 
+            missCount = 0;
+            isGameOver = false;
+            buttonCatch.Enabled = true;
+
             buttonCatch.Size = new Size(newWidth, newHeight);
             buttonCatch.Location = GetRandomLocationInsideForm(buttonCatch);
 
@@ -167,6 +171,7 @@ namespace CatchButton
             buttonCatch.Enabled = true;
             buttonCatch.Size = initialCatchButtonSize;
             buttonCatch.Location = new Point(180, 160);
+            buttonCatch.BackColor = Color.FromArgb(255, 240, 240, 240);
 
             UpdateTitle();
             Invalidate();
