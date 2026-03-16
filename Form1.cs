@@ -1,6 +1,7 @@
 
 using System;
 using System.Drawing;
+using System.IO;
 using System.Media;
 using System.Windows.Forms;
 
@@ -14,11 +15,72 @@ namespace CatchButton
         private Size initialCatchButtonSize;
         private bool isGameOver = false;
 
+        private SoundPlayer? catchSound;
+        private SoundPlayer? escapeSound;
+
         public Form1()
         {
             InitializeComponent();
             initialCatchButtonSize = buttonCatch.Size;
+            InitializeSounds();
             UpdateTitle();
+        }
+
+        private void InitializeSounds()
+        {
+            try
+            {
+                string soundsPath = Path.Combine(Application.StartupPath, "Sounds");
+                string catchPath = Path.Combine(soundsPath, "catch.wav");
+                string escapePath = Path.Combine(soundsPath, "escape.wav");
+
+                if (File.Exists(catchPath))
+                {
+                    catchSound = new SoundPlayer(catchPath);
+                    catchSound.LoadAsync();
+                }
+
+                if (File.Exists(escapePath))
+                {
+                    escapeSound = new SoundPlayer(escapePath);
+                    escapeSound.LoadAsync();
+                }
+            }
+            catch
+            {
+                catchSound = null;
+                escapeSound = null;
+            }
+        }
+
+        private void PlayCatchSound()
+        {
+            try
+            {
+                if (catchSound != null)
+                    catchSound.Play();
+                else
+                    SystemSounds.Asterisk.Play();
+            }
+            catch
+            {
+                SystemSounds.Asterisk.Play();
+            }
+        }
+
+        private void PlayEscapeSound()
+        {
+            try
+            {
+                if (escapeSound != null)
+                    escapeSound.Play();
+                else
+                    SystemSounds.Exclamation.Play();
+            }
+            catch
+            {
+                SystemSounds.Exclamation.Play();
+            }
         }
 
         private void UpdateTitle()
@@ -41,7 +103,7 @@ namespace CatchButton
         {
             if (isGameOver) return;
 
-            SystemSounds.Beep.Play();
+            PlayEscapeSound();
 
             score -= 10;
             missCount++;
@@ -56,7 +118,7 @@ namespace CatchButton
         {
             if (isGameOver) return;
 
-            SystemSounds.Asterisk.Play();
+            PlayCatchSound();
 
             score += 100;
 
